@@ -1,8 +1,10 @@
 st-fold-comments
 ================
-Sublime fold comments plugin.
-
 Based on http://www.sublimetext.com/forum/viewtopic.php?f=3&t=4620#p21083
+
+Sublime fold comments plugin:
+- before http://cl.ly/image/173o033w2O3q
+- after http://cl.ly/image/0w441V0o3a1h
 
 ##### Run
 through Command Palette (`Cmd+Shift+P` on Mac):

@@ -6,45 +6,50 @@ def region_fix(self, region):
     else:
         return sublime.Region(region.a, region.b - 1)
 
+def fold_comments(self):
+    comments = self.view.find_by_selector('comment')
+    comments.reverse()
+    comments_reversed = comments
+
+    # Current region:
+    # we try to group neighbours
+    cur_region = comments_reversed[0]
+
+    # Regions to fold
+    regions = []
+
+    # going backword like so: [(100,120), (80,90)]
+    for i, region in enumerate(comments_reversed):
+        if i == 0:
+            # skip first one
+            continue
+
+        # get string in between two comments
+        str = self.view.substr(sublime.Region(region.b, cur_region.a))
+        if re.match(r"^(\s|\n)*$", str):
+            # join this two
+            cur_region = sublime.Region(region.a, cur_region.b)
+        else:
+            # add current as region
+            regions.append(region_fix(self, cur_region))
+            # and continue with the one
+            cur_region = region
+
+    # do not forget about the current
+    regions.append(region_fix(self, cur_region))
+
+    self.view.fold(regions)
+
+
+# FIXME fold comments by default...
 # class FoldFileComments(sublime_plugin.EventListener):
 #     def on_load(self, view):
 #         view.fold(view.find_by_selector('comment'))
 
 class FoldCommentsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        comments = self.view.find_by_selector('comment')
-        comments.reverse()
-        comments_reversed = comments
+        fold_comments(self)
 
-        # Current region:
-        # we try to group neighbours
-        cur_region = comments_reversed[0]
-
-        # Regions to fold
-        regions = []
-
-        # going backword like so: [(100,120), (80,90)]
-        for i, region in enumerate(comments_reversed):
-            if i == 0:
-                # skip first one
-                continue
-
-            # get string in between two comments
-            str = self.view.substr(sublime.Region(region.b, cur_region.a))
-            if re.match(r"^(\s|\n)*$", str):
-                # join this two
-                cur_region = sublime.Region(region.a, cur_region.b)
-            else:
-                # add current as region
-                regions.append(region_fix(self, cur_region))
-                # and continue with the one
-                cur_region = region
-
-        # do not forget about the current
-        regions.append(region_fix(self, cur_region))
-        # print regions
-
-        self.view.fold(regions)
 
 # class UnfoldCommentsCommand(sublime_plugin.TextCommand):
 #     def run(self, edit):

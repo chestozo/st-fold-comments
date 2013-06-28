@@ -43,6 +43,13 @@ def fold_comments(self):
 def unfold_comments(self):
     self.view.unfold(self.view.find_by_selector('comment'))
 
+def remove_comments(self, edit):
+    comments = self.view.find_by_selector('comment')
+    comments.reverse()
+
+    for c in comments:
+        self.view.erase(edit, c)
+
 class FoldCommentsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         fold_comments(self)
@@ -50,3 +57,7 @@ class FoldCommentsCommand(sublime_plugin.TextCommand):
 class UnfoldCommentsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         unfold_comments(self)
+
+class RemoveCommentsCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        remove_comments(self, edit)
